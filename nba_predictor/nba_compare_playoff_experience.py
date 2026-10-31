@@ -7,13 +7,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from nba_champion_best_player import SECOND_PLAYER_FEATURES
-from nba_champion_first_time import FIRST_TIME_FEATURES
-from nba_champion_playoff_experience import (ACTUAL_EXPERIENCE_FEATURES, CONTINUITY_FEATURES,
+from nba_predictor.nba_champion_best_player import SECOND_PLAYER_FEATURES
+from nba_predictor.nba_champion_first_time import FIRST_TIME_FEATURES
+from nba_predictor.nba_champion_playoff_experience import (ACTUAL_EXPERIENCE_FEATURES, CONTINUITY_FEATURES,
                                              PLAYOFF_EXPERIENCE_FEATURES, EXPERIENCE_RULE, add_playoff_experience)
-from nba_champion_window_search import prepare_data
-from nba_compare_roster_depth import fit_configuration, summarize, validate_dates
-from nba_predict_champions_xgboost_2010_2026 import locate
+from nba_predictor.nba_champion_window_search import prepare_data
+from nba_predictor.nba_compare_roster_depth import fit_configuration, summarize, validate_dates
+from nba_predictor.nba_predict_champions_xgboost_2010_2026 import locate
 
 
 def feature_configurations(baseline):
@@ -98,7 +98,7 @@ def write_report(output, comparison, differences, args):
               '- `playoff_roster_similarity.csv`: each current team versus all its earlier franchise playoff rosters, coaches, shared players, overlap, and transfer weights. Only rows flagged inside five years enter the model.',
               '- `playoff_identity_coverage.csv`: identity matching and left-censoring diagnostics.',
               '- Model subdirectories: all team scores, feature selection audits, coefficients/importances, and exact selected-feature metadata.',
-              '- `nba_updated/playoff_history/`: downloaded/derived player, coach, series and team histories, source coverage and totals cross-checks.', '',
+              '- `data/nba_updated/playoff_history/`: downloaded/derived player, coach, series and team histories, source coverage and totals cross-checks.', '',
               'All original prediction outputs and earlier experiments are preserved. See `experiment_manifest.json` for '
               'source hashes, arguments, and selected configurations.', '']
     (output/'REPORT.md').write_text('\n'.join(lines), encoding='utf-8')
@@ -106,11 +106,11 @@ def write_report(output, comparison, differences, args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--input-dir', type=Path, default=Path('nba_updated'))
-    parser.add_argument('--analysis-dir', type=Path, default=Path('nba_champions_analysis'))
-    parser.add_argument('--output-dir', type=Path, default=Path('nba_playoff_experience_comparison_1983_2002'))
-    parser.add_argument('--playoff-history-dir', type=Path, default=Path('nba_updated/playoff_history'))
-    parser.add_argument('--baseline-details', type=Path, default=Path('nba_champion_predictions_xgboost/model_details.json'))
+    parser.add_argument('--input-dir', type=Path, default=Path('data/nba_updated'))
+    parser.add_argument('--analysis-dir', type=Path, default=Path('outputs/nba_champions_analysis'))
+    parser.add_argument('--output-dir', type=Path, default=Path('outputs/nba_playoff_experience_comparison_1983_2002'))
+    parser.add_argument('--playoff-history-dir', type=Path, default=Path('data/nba_updated/playoff_history'))
+    parser.add_argument('--baseline-details', type=Path, default=Path('outputs/nba_champion_predictions_xgboost/model_details.json'))
     parser.add_argument('--train-start', type=int, default=1983)
     parser.add_argument('--train-end', type=int, default=2002)
     parser.add_argument('--validation-start', type=int, default=2003)

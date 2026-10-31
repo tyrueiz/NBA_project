@@ -2,9 +2,9 @@
 """NBA champion predictor trained on a configurable historical season window.
 
 Inputs (from NBA champions analysis and original scraper):
-  nba_champions_analysis/team_metrics_all_seasons.csv
-  nba_champions_analysis/champions_vs_league_all_stats.csv (optional label fallback)
-  nba_updated/NBA_team_seasons_1947_2027.csv
+  outputs/nba_champions_analysis/team_metrics_all_seasons.csv
+  outputs/nba_champions_analysis/champions_vs_league_all_stats.csv (optional label fallback)
+  data/nba_updated/NBA_team_seasons_1947_2027.csv
 
 Predict title winners using same-season REGULAR-SEASON statistics.
 Training ends before the prediction window; prediction-season championship
@@ -12,8 +12,8 @@ outcomes and postseason statistics never enter model fitting. This is a post-reg
 prediction, NOT a preseason prediction.
 
 Install: python3 -m pip install pandas numpy scikit-learn
-Run: python3 nba_predict_champions_2010_2026.py \
-        --analysis-dir nba_champions_analysis --input-dir nba_updated
+Run: python3 -m nba_predictor.nba_predict_champions_2010_2026 \
+        --analysis-dir outputs/nba_champions_analysis --input-dir data/nba_updated
 
 No network requests are made.
 """
@@ -28,13 +28,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from nba_champion_advanced import TEAM_ADVANCED_FEATURES, ERA_INDICATOR_FEATURES, add_team_advanced
-from nba_champion_best_player import BEST_PLAYER_FEATURES, SECOND_PLAYER_FEATURES, TOP_TWO_PLAYER_FEATURES, TOP_PLAYER_FEATURES, BEST_PLAYER_RULE
-from nba_team_ratings import TEAM_RATING_FEATURES, add_team_ratings
-from nba_champion_first_time import FIRST_TIME_FEATURES, FIRST_TIME_RULE, add_first_time_features
-from nba_champion_roster_depth import (ROSTER_DEPTH_FEATURES, add_roster_depth, depth_candidates,
+from nba_predictor.nba_champion_advanced import TEAM_ADVANCED_FEATURES, ERA_INDICATOR_FEATURES, add_team_advanced
+from nba_predictor.nba_champion_best_player import BEST_PLAYER_FEATURES, SECOND_PLAYER_FEATURES, TOP_TWO_PLAYER_FEATURES, TOP_PLAYER_FEATURES, BEST_PLAYER_RULE
+from nba_predictor.nba_team_ratings import TEAM_RATING_FEATURES, add_team_ratings
+from nba_predictor.nba_champion_first_time import FIRST_TIME_FEATURES, FIRST_TIME_RULE, add_first_time_features
+from nba_predictor.nba_champion_roster_depth import (ROSTER_DEPTH_FEATURES, add_roster_depth, depth_candidates,
                                         depth_configuration, feature_selection_audit)
-from nba_champion_playoff_experience import (PLAYOFF_EXPERIENCE_FEATURES, ACTUAL_EXPERIENCE_FEATURES, EXPERIENCE_RULE,
+from nba_predictor.nba_champion_playoff_experience import (PLAYOFF_EXPERIENCE_FEATURES, ACTUAL_EXPERIENCE_FEATURES, EXPERIENCE_RULE,
                                                add_playoff_experience, experience_candidates)
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
@@ -187,9 +187,9 @@ def evaluate_period(table: pd.DataFrame, predictions: pd.DataFrame, labels: dict
 
 def main():
     parser = argparse.ArgumentParser(description='Train only on champions; predict 2010–2026.')
-    parser.add_argument('--analysis-dir', type=Path, default=Path('nba_champions_analysis'))
-    parser.add_argument('--input-dir', type=Path, default=Path('nba_updated'))
-    parser.add_argument('--output-dir', type=Path, default=Path('nba_champion_predictions'))
+    parser.add_argument('--analysis-dir', type=Path, default=Path('outputs/nba_champions_analysis'))
+    parser.add_argument('--input-dir', type=Path, default=Path('data/nba_updated'))
+    parser.add_argument('--output-dir', type=Path, default=Path('outputs/nba_champion_predictions'))
     parser.add_argument('--train-start', type=int, default=1980, help='First training season (inclusive)')
     parser.add_argument('--train-end', type=int, default=2023, help='Must be predict-start-1 or earlier to prevent leakage')
     parser.add_argument('--predict-start', type=int, default=2024)
@@ -221,7 +221,7 @@ def main():
     parser.set_defaults(include_playoff_experience=False)
     parser.add_argument('--no-playoff-continuity', action='store_true',
                         help='Retain actual player/coach experience but exclude the five roster-continuity model inputs')
-    parser.add_argument('--playoff-history-dir', type=Path, default=Path('nba_updated/playoff_history'),
+    parser.add_argument('--playoff-history-dir', type=Path, default=Path('data/nba_updated/playoff_history'),
                         help='Verified caches built by nba_download_playoff_history.py')
     args = parser.parse_args()
     if args.predict_start > args.predict_end: parser.error('Invalid prediction range')
@@ -236,7 +236,7 @@ def main():
 
     metric_path = args.analysis_dir / 'team_metrics_all_seasons.csv'
     if not metric_path.exists():
-        raise FileNotFoundError(f'Missing {metric_path}. Run nba_champions_vs_league.py first.')
+        raise FileNotFoundError(f'Missing {metric_path}. Run python3 -m nba_predictor.nba_champions_vs_league first.')
     source_path = locate(args.input_dir, 'NBA_team_seasons_*.csv')
     comparison_path = args.analysis_dir / 'champions_vs_league_all_stats.csv'
 
@@ -278,7 +278,7 @@ def main():
     if not args.no_advanced:
         advanced_path = args.advanced_file or locate(args.input_dir, 'NBA_advanced_*.csv', required=False)
         if advanced_path is None:
-            raise FileNotFoundError('Run python3 nba_download_advanced.py first, provide --advanced-file, '
+            raise FileNotFoundError('Run python3 -m nba_predictor.nba_download_advanced first, provide --advanced-file, '
                                     'or explicitly use --no-advanced for the baseline.')
         stats_path = None if args.no_best_player else (args.stats_file or locate(args.input_dir, 'NBA_stats_[0-9]*_[0-9]*.csv'))
         metrics, advanced_audit = add_team_advanced(metrics, advanced_path, stats_path,
@@ -305,7 +305,7 @@ def main():
     if not args.no_team_ratings:
         team_ratings_path = args.team_ratings_file or locate(args.input_dir, 'NBA_team_ratings_*.csv', required=False)
         if team_ratings_path is None:
-            raise FileNotFoundError('Run python3 nba_download_team_ratings.py first, provide --team-ratings-file, '
+            raise FileNotFoundError('Run python3 -m nba_predictor.nba_download_team_ratings first, provide --team-ratings-file, '
                                     'or explicitly use --no-team-ratings.')
         metrics, ratings_audit = add_team_ratings(metrics, team_ratings_path)
         ratings_audit.to_csv(args.output_dir/'team_rating_coverage.csv', index=False)

@@ -12,7 +12,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-from nba_advanced_stats import ADVANCED_FEATURES, join_advanced
+from nba_predictor.nba_advanced_stats import ADVANCED_FEATURES, join_advanced
 
 
 TOTAL_STATS = ('MP', 'PTS', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'ORB', 'DRB',
@@ -221,12 +221,12 @@ def score(model: Pipeline, features: pd.DataFrame, players: pd.DataFrame,
 
 def main(kind: str) -> int:
     parser = argparse.ArgumentParser(description=f'{kind} regression NBA MVP predictor from regular-season stats.')
-    parser.add_argument('--input-dir', type=Path, default=Path('nba_updated'))
+    parser.add_argument('--input-dir', type=Path, default=Path('data/nba_updated'))
     parser.add_argument('--stats-file', type=Path, help='Override the regular-season player totals CSV')
     parser.add_argument('--team-file', type=Path, help='Override regular-season team results CSV')
     parser.add_argument('--advanced-file', type=Path, help='Advanced regular-season CSV; auto-detected by default')
     parser.add_argument('--no-advanced', action='store_true', help='Explicitly run the box-score baseline')
-    parser.add_argument('--output-dir', type=Path, default=Path(f'nba_mvp_predictions_{kind}'))
+    parser.add_argument('--output-dir', type=Path, default=Path(f'outputs/nba_mvp_predictions_{kind}'))
     parser.add_argument('--train-start', type=int, default=1980)
     parser.add_argument('--train-end', type=int, default=2010)
     parser.add_argument('--predict-start', type=int, default=2011)
@@ -265,7 +265,7 @@ def main(kind: str) -> int:
             candidates = sorted(args.input_dir.glob('NBA_advanced_*.csv'),
                                 key=lambda p: (p.stat().st_mtime, p.name), reverse=True)
             if not candidates:
-                parser.error('Advanced stats are required. Run python3 nba_download_advanced.py '
+                parser.error('Advanced stats are required. Run python3 -m nba_predictor.nba_download_advanced '
                              'first, provide --advanced-file, or use --no-advanced for the baseline.')
             advanced_path = candidates[0]
         players, advanced_coverage = join_advanced(players, advanced_path)

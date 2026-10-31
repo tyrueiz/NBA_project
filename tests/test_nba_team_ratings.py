@@ -4,13 +4,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from nba_download_team_ratings import TEAM_RATING_FEATURES, normalize_ratings
-from nba_team_ratings import add_team_ratings
-from nba_champion_best_player import TOP_PLAYER_FEATURES
-from nba_champion_advanced import TEAM_ADVANCED_FEATURES
-from nba_champion_first_time import FIRST_TIME_FEATURES
-from nba_predict_champions_2010_2026 import available_features as logistic_features
-from nba_predict_champions_xgboost_2010_2026 import available_features as xgb_features
+from nba_predictor.nba_download_team_ratings import TEAM_RATING_FEATURES, normalize_ratings
+from nba_predictor.nba_team_ratings import add_team_ratings
+from nba_predictor.nba_champion_best_player import TOP_PLAYER_FEATURES
+from nba_predictor.nba_champion_advanced import TEAM_ADVANCED_FEATURES
+from nba_predictor.nba_champion_first_time import FIRST_TIME_FEATURES
+from nba_predictor.nba_predict_champions_2010_2026 import available_features as logistic_features
+from nba_predictor.nba_predict_champions_xgboost_2010_2026 import available_features as xgb_features
 
 
 class TeamRatingTests(unittest.TestCase):

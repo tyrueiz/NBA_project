@@ -23,14 +23,14 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from threadpoolctl import threadpool_limits
 
-from nba_champion_advanced import add_team_advanced
-from nba_team_ratings import TEAM_RATING_FEATURES, add_team_ratings
-from nba_champion_first_time import add_first_time_features
-from nba_predict_champions_2010_2026 import (
+from nba_predictor.nba_champion_advanced import add_team_advanced
+from nba_predictor.nba_team_ratings import TEAM_RATING_FEATURES, add_team_ratings
+from nba_predictor.nba_champion_first_time import add_first_time_features
+from nba_predictor.nba_predict_champions_2010_2026 import (
     available_features, load_champion_labels, locate, normalize_frame,
     season_alias_map, to_season_zscores,
 )
-from nba_predict_champions_xgboost_2010_2026 import make_xgb_pipeline
+from nba_predictor.nba_predict_champions_xgboost_2010_2026 import make_xgb_pipeline
 
 
 def training_windows(first_year: int, last_validation_year: int,
@@ -213,12 +213,12 @@ def fingerprint(args, sources):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--input-dir', type=Path, default=Path('nba_updated'))
-    parser.add_argument('--analysis-dir', type=Path, default=Path('nba_champions_analysis'))
+    parser.add_argument('--input-dir', type=Path, default=Path('data/nba_updated'))
+    parser.add_argument('--analysis-dir', type=Path, default=Path('outputs/nba_champions_analysis'))
     parser.add_argument('--advanced-file', type=Path)
     parser.add_argument('--stats-file', type=Path)
     parser.add_argument('--team-ratings-file', type=Path)
-    parser.add_argument('--output-dir', type=Path, default=Path('nba_champion_window_search_top2_ratings'))
+    parser.add_argument('--output-dir', type=Path, default=Path('outputs/nba_champion_window_search_top2_ratings'))
     parser.add_argument('--first-year', type=int, default=1973)
     parser.add_argument('--last-validation-year', type=int, default=2025)
     parser.add_argument('--test-end', type=int, default=2026)

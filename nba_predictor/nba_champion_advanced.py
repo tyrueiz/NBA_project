@@ -4,8 +4,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from nba_advanced_stats import NBA_STAT_START_SEASON, normalize_advanced, player_key, team_key
-from nba_champion_best_player import BEST_PLAYER_FEATURES, SECOND_PLAYER_FEATURES, PLAYER_FEATURE_START, select_best_players
+from nba_predictor.nba_advanced_stats import NBA_STAT_START_SEASON, normalize_advanced, player_key, team_key
+from nba_predictor.nba_champion_best_player import BEST_PLAYER_FEATURES, SECOND_PLAYER_FEATURES, PLAYER_FEATURE_START, select_best_players
 
 
 WEIGHTED_STATS = ('PER', 'BPM', 'OBPM', 'DBPM', 'WS/48')

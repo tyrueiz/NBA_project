@@ -4,8 +4,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from nba_advanced_stats import normalize_advanced, player_key, team_key
-from nba_champion_best_player import rank_team_players
+from nba_predictor.nba_advanced_stats import normalize_advanced, player_key, team_key
+from nba_predictor.nba_champion_best_player import rank_team_players
 
 
 ROSTER_DEPTH_FEATURES = ('Third_Player_BPM', 'Fourth_Player_BPM',

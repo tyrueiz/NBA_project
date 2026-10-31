@@ -20,8 +20,8 @@ such components are labeled as minutes-weighted player estimates.
 
 Run:
   python -m pip install pandas numpy matplotlib
-  python nba_champions_vs_league.py --input-dir nba_updated
-  python nba_champions_vs_league.py --input-dir nba_updated --plots --plot-years 2024 2025 2026
+  python -m nba_predictor.nba_champions_vs_league --input-dir data/nba_updated
+  python -m nba_predictor.nba_champions_vs_league --input-dir data/nba_updated --plots --plot-years 2024 2025 2026
 
 Years are season END years; 2024 means 2023-24. 2026-27 is omitted until
 its champion is known. Missing stats in early eras remain missing.
@@ -572,10 +572,10 @@ def make_plots(comparison: pd.DataFrame, details: pd.DataFrame, folder: Path,
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--input-dir", default="nba_updated", help="Unified scraper output directory")
+    p.add_argument("--input-dir", default="data/nba_updated", help="Unified scraper output directory")
     p.add_argument("--stats", help="Override player stats CSV path")
     p.add_argument("--teams", help="Override NBA_team_seasons CSV path")
-    p.add_argument("--outdir", default="nba_champions_analysis", help="Output folder")
+    p.add_argument("--outdir", default="outputs/nba_champions_analysis", help="Output folder")
     p.add_argument("--min-team-coverage", type=float, default=.90,
                    help="Min share of teams with player data to benchmark a season/stat [0..1]")
     p.add_argument("--max-missing-player-fraction", type=float, default=.05,
@@ -626,7 +626,7 @@ def main(argv=None):
     for status, n in coverage["Status"].value_counts().items():
         print(f"  {int(n):3d} seasons: {status}")
     if cmp.empty:
-        print("\nNO CHAMPIONS ANALYZED. Look at nba_champions_analysis/analysis_coverage_report.csv", file=sys.stderr)
+        print("\nNO CHAMPIONS ANALYZED. Look at outputs/nba_champions_analysis/analysis_coverage_report.csv", file=sys.stderr)
         print("If it says 'champion unknown', inspect Won_Title / Playoff_Result in your "
               "NBA_team_seasons file and re-run the playoff collector if both are empty.", file=sys.stderr)
         print("If it says 'insufficient team coverage', inspect which teams are missing "

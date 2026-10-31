@@ -6,13 +6,13 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from nba_advanced_stats import player_key
-from nba_champion_playoff_experience import (ACTUAL_EXPERIENCE_FEATURES, PLAYOFF_EXPERIENCE_FEATURES, add_playoff_experience,
+from nba_predictor.nba_advanced_stats import player_key
+from nba_predictor.nba_champion_playoff_experience import (ACTUAL_EXPERIENCE_FEATURES, PLAYOFF_EXPERIENCE_FEATURES, add_playoff_experience,
                                              roster_overlap, continuity_weight, match_roster_identities)
-from nba_download_playoff_history import build_history, parse_coaches, parse_season_totals, season_from_game_id
-from nba_predict_champions_2010_2026 import available_features as logistic_features
-from nba_predict_champions_xgboost_2010_2026 import available_features as xgb_features
-from nba_compare_playoff_experience import feature_configurations
+from nba_predictor.nba_download_playoff_history import build_history, parse_coaches, parse_season_totals, season_from_game_id
+from nba_predictor.nba_predict_champions_2010_2026 import available_features as logistic_features
+from nba_predictor.nba_predict_champions_xgboost_2010_2026 import available_features as xgb_features
+from nba_predictor.nba_compare_playoff_experience import feature_configurations
 
 
 class ActualExperienceTests(unittest.TestCase):

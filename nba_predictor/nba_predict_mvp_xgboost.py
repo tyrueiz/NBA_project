@@ -2,7 +2,7 @@
 """Predict NBA MVP rankings with XGBoost regression. Run with --help for options."""
 import sys
 
-from nba_mvp_common import main
+from nba_predictor.nba_mvp_common import main
 
 
 if __name__ == '__main__':

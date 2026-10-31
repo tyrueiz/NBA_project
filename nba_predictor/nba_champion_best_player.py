@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from nba_advanced_stats import NBA_STAT_START_SEASON, player_key, team_key
+from nba_predictor.nba_advanced_stats import NBA_STAT_START_SEASON, player_key, team_key
 
 
 BEST_PLAYER_ADVANCED = ('PER', 'BPM', 'OBPM', 'DBPM', 'WS/48', 'WS', 'VORP', 'TS%', 'USG%')

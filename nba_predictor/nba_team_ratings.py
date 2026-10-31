@@ -4,8 +4,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from nba_advanced_stats import team_key
-from nba_download_team_ratings import TEAM_RATING_FEATURES
+from nba_predictor.nba_advanced_stats import team_key
+from nba_predictor.nba_download_team_ratings import TEAM_RATING_FEATURES
 
 
 def add_team_ratings(metrics: pd.DataFrame, path: Path):

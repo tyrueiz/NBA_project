@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from nba_advanced_stats import join_advanced, normalize_advanced, player_key
-from nba_download_advanced import fetch_season, main as download_main
-from nba_mvp_common import make_features
+from nba_predictor.nba_advanced_stats import join_advanced, normalize_advanced, player_key
+from nba_predictor.nba_download_advanced import fetch_season, main as download_main
+from nba_predictor.nba_mvp_common import make_features
 
 
 def advanced_row(**overrides):

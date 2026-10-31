@@ -5,12 +5,7 @@ __pycache__/
 .venv/
 
 # Downloaded datasets and generated analysis/model outputs
-/nba_updated/
-/nba_champions_analysis/
-/nba_champion_predictions*/
-/nba_mvp_predictions*/
-/nba_champion_window_search/
-/nba_roster_depth_experiments*/
-/nba_playoff_experience_comparison*/
-/nba_playoff_experience_experiments*/
-/nba_playoff_experience_script_checks/
+/data/*
+!/data/README.md
+/outputs/*
+!/outputs/README.md

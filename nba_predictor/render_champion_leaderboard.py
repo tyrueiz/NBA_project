@@ -72,5 +72,5 @@ document.querySelector('#model').addEventListener('change',update);document.quer
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('directory', type=Path, nargs='?', default=Path('nba_champion_window_search_top2_ratings'))
+    parser.add_argument('directory', type=Path, nargs='?', default=Path('outputs/nba_champion_window_search_top2_ratings'))
     print(render(parser.parse_args().directory).resolve())

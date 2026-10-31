@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from nba_mvp_common import (add_team_context, add_voting_history, load_players,
+from nba_predictor.nba_mvp_common import (add_team_context, add_voting_history, load_players,
                             make_features, score, summarize, CONTEXT_FEATURES)
 
 

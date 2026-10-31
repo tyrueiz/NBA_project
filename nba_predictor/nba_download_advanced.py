@@ -19,7 +19,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-from nba_advanced_stats import ADVANCED_FEATURES, API_URL, normalize_advanced
+from nba_predictor.nba_advanced_stats import ADVANCED_FEATURES, API_URL, normalize_advanced
 
 HISTORICAL_URL = 'https://www.kaggle.com/api/v1/datasets/download/sumitrodatta/nba-aba-baa-stats/Advanced.csv'
 HISTORICAL_COLUMNS = {
@@ -100,7 +100,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--start', type=int, default=1970)
     parser.add_argument('--end', type=int, default=2026)
-    parser.add_argument('--outdir', type=Path, default=Path('nba_updated'))
+    parser.add_argument('--outdir', type=Path, default=Path('data/nba_updated'))
     parser.add_argument('--refresh', action='store_true')
     parser.add_argument('--delay', type=float, default=1, help='Seconds between API requests')
     args = parser.parse_args()

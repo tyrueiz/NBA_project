@@ -7,14 +7,14 @@ from unittest.mock import patch
 import numpy as np
 import pandas as pd
 
-from nba_advanced_stats import player_key, team_key
-from nba_champion_best_player import select_best_players
-from nba_champion_roster_depth import ROSTER_DEPTH_FEATURES, add_roster_depth
-from nba_compare_roster_depth import configurations, fit_configuration, validate_dates
-from nba_predict_champions_2010_2026 import available_features as logistic_features
-from nba_predict_champions_xgboost_2010_2026 import available_features as xgb_features
-from nba_predict_champions_2010_2026 import to_season_zscores as logistic_zscores
-from nba_predict_champions_xgboost_2010_2026 import to_season_zscores as xgb_zscores
+from nba_predictor.nba_advanced_stats import player_key, team_key
+from nba_predictor.nba_champion_best_player import select_best_players
+from nba_predictor.nba_champion_roster_depth import ROSTER_DEPTH_FEATURES, add_roster_depth
+from nba_predictor.nba_compare_roster_depth import configurations, fit_configuration, validate_dates
+from nba_predictor.nba_predict_champions_2010_2026 import available_features as logistic_features
+from nba_predictor.nba_predict_champions_xgboost_2010_2026 import available_features as xgb_features
+from nba_predictor.nba_predict_champions_2010_2026 import to_season_zscores as logistic_zscores
+from nba_predictor.nba_predict_champions_xgboost_2010_2026 import to_season_zscores as xgb_zscores
 
 
 class RosterDepthTests(unittest.TestCase):
@@ -185,7 +185,7 @@ class ExperimentTests(unittest.TestCase):
             def predict_proba(self, x):
                 return np.tile([.7, .3], (len(x), 1))
 
-        with patch('nba_compare_roster_depth.make_xgb_pipeline', return_value=Spy()):
+        with patch('nba_predictor.nba_compare_roster_depth.make_xgb_pipeline', return_value=Spy()):
             _, first, _ = fit_configuration(frame, labels, ['PTS'], self.args(), 2011)
             changed = {year: 'CCC' if year >= 2003 else team for year, team in labels.items()}
             _, second, _ = fit_configuration(frame, changed, ['PTS'], self.args(), 2011)

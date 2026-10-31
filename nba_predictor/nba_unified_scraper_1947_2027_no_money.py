@@ -1,28 +1,24 @@
 #!/usr/bin/env python3
-"""NBA scraper: player stats, player salaries, team payroll, and NBA standings/playoffs.
+"""NBA scraper (no-money edition): player stats, team wins/losses, playoffs.
 
-Adapted from two scripts prepared in this conversation and from the workflow in
-https://github.com/logan-lauton/nba_webscrape . This is not an official NBA API.
+Based on the earlier combined scraper prepared in this conversation. The
+workflow draws from https://github.com/logan-lauton/nba_webscrape .
+This is not an official NBA API.
 
-Every year option is a *season-ending year*: 2024 = the 2023-24 NBA season.
-Defaults: playoff histories, player stats, salaries, and payrolls are all
-requested for season-ending years 1947-2027. The 2026-27 season
-is IN PROGRESS: live team standings and player statistics may change, and the
-playoff outcomes are deliberately left blank. Reliable public salary/payroll
-records are NOT available for every season. Money requests before the 1984-85
-season are skipped by default (reported as no_verified_source), and all other
-missing data are left blank. Never interpret a missing salary as $0.
+Seasons use their END year: 2024 means 2023-24. By default, this edition
+requests 1947-2027. The 2026-27 season is still in progress, so playoff
+results for 2027 remain missing while standings/statistics may change.
 
-Basketball-Reference says its historical salaries start in 1984-85 and are
-incomplete. HoopsHype coverage may be more limited. Use --earliest-money-year
-to adjust when money requests should begin; this is NOT an evidence guarantee.
+This edition will NOT fetch any salary or team payroll records, regardless
+of whether --skip-money is provided. Available outputs include season-by-
+season raw player statistics, team standings and playoff results, and a
+joined statistics-with-playoffs CSV. Unavailable records are not invented.
 
-Sources: Basketball-Reference (stats, standings, postseason), HoopsHype
-(player salaries and team payroll). Follow site terms and robots instructions;
-stop on 403, 429, access challenges. No access-control evasion.
+Source: Basketball-Reference. Follow its terms and robots instructions; do
+not bypass access restrictions, 403/429 blocks, or CAPTCHA challenges.
 
 Install: python -m pip install pandas requests beautifulsoup4 lxml
-Example: python nba_unified_scraper_1947_2027.py --kind all
+Run: python -m nba_predictor.nba_unified_scraper_1947_2027_no_money --kind all --skip-money
 """
 
 import argparse
@@ -627,20 +623,16 @@ def merge_existing_csv(path, outcomes, outdir, team_col=None, season_col=None):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--kind", choices=["all", "stats", "salaries", "payroll", "playoffs"], default="all")
-    p.add_argument("--skip-money", action="store_true",
-                   help="With --kind all, collect only player stats and team standings/playoffs; "
-                        "skip player salaries and team payroll entirely")
+    p.add_argument("--kind", choices=["all", "stats", "playoffs"], default="all")
+    p.add_argument("--skip-money", action="store_true", default=True,
+                   help="Skip salaries and team payroll (always enabled in this no-money version)")
     p.add_argument("--playoffs-start", type=int, default=1947, help="First playoff season END year")
     p.add_argument("--playoffs-end", type=int, default=CURRENT_SEASON_END,
                    help="Last team-results season END year (2027 is in progress; playoffs pending)")
     p.add_argument("--data-start", type=int, default=1947, help="First stats/salaries/payroll season END year (default 1947)")
     p.add_argument("--data-end", type=int, default=CURRENT_SEASON_END,
                    help="Last stats/salaries/payroll season END year (2027 includes live stats)")
-    p.add_argument("--earliest-money-year", type=int, default=DEFAULT_EARLIEST_MONEY_YEAR,
-                   help="First season-ending year to TRY scraping salaries/payrolls (default 1985). "
-                        "Years earlier remain explicitly unavailable, not $0.")
-    p.add_argument("--outdir", default="nba_updated")
+    p.add_argument("--outdir", default="data/nba_updated")
     p.add_argument("--delay", type=float, default=8.0, help="Pause after requests, minimum 6 seconds")
     p.add_argument("--refresh", action="store_true",
                    help="Replace cached historical CSVs (2027 always refreshes)")
@@ -649,16 +641,12 @@ def main(argv=None):
     p.add_argument("--team-col", help="Team column to use for --merge-existing")
     p.add_argument("--season-col", help="Season column to use for --merge-existing")
     args = p.parse_args(argv)
-    if args.skip_money and args.kind in {"salaries", "payroll"}:
-        p.error("--skip-money cannot be combined with --kind salaries or payroll")
     if not 1947 <= args.playoffs_start <= args.playoffs_end <= CURRENT_SEASON_END:
         p.error("Playoff ending years must be between 1947 and 2027")
     if not 1947 <= args.data_start <= args.data_end <= CURRENT_SEASON_END:
         p.error("Data ending years must be between 1947 and 2027")
     if args.delay < 6:
         p.error("--delay must be at least 6 seconds")
-    if not 1947 <= args.earliest_money_year <= CURRENT_SEASON_END:
-        p.error("--earliest-money-year must be between 1947 and 2027")
     outdir = Path(args.outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     session = requests.Session()
@@ -666,15 +654,15 @@ def main(argv=None):
         "User-Agent": "NBA-research-project/1.0 (polite academic scraper)",
         "Accept-Language": "en-US,en;q=0.9",
     })
-    kinds = (["playoffs", "stats"] if args.skip_money else
-             ["playoffs", "stats", "salaries", "payroll"]) if args.kind == "all" else [args.kind]
+    # No-money edition: never fetch HoopsHype salaries or team payrolls.
+    kinds = ["playoffs", "stats"] if args.kind == "all" else [args.kind]
     all_data = {}
     log = []
     for kind in kinds:
         years = (range(args.playoffs_start, args.playoffs_end + 1) if kind == "playoffs"
                  else range(args.data_start, args.data_end + 1))
         data = safe_collect(session, kind, years, outdir, args.delay, args.refresh, log,
-                            earliest_money_year=args.earliest_money_year)
+                            earliest_money_year=DEFAULT_EARLIEST_MONEY_YEAR)
         if data is not None:
             all_data[kind] = data
     if log:
@@ -705,7 +693,7 @@ def main(argv=None):
               file=sys.stderr)
         return 1
     print("Finished attempting available-source seasons. See coverage_summary.csv "
-          "for historical salary/payroll gaps and download_report.csv for each year.")
+          "for source coverage and download_report.csv for each year.")
     return 0
 
 

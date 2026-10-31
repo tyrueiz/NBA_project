@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from nba_advanced_stats import player_key, team_key
+from nba_predictor.nba_advanced_stats import player_key, team_key
 
 
 FIRST_TIME_FEATURES = ('Prior_Best_Player_Playoff_Seasons_Proxy',

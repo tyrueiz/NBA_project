@@ -9,7 +9,7 @@ import re
 import numpy as np
 import pandas as pd
 
-from nba_advanced_stats import player_key, team_key
+from nba_predictor.nba_advanced_stats import player_key, team_key
 
 HISTORY_STATS = ('G', 'MP', 'Series_Wins', 'Conference_Finals', 'Finals')
 ACTUAL_EXPERIENCE_FEATURES = tuple(f'Roster_Prior_Playoff_{stat}' for stat in HISTORY_STATS) + tuple(

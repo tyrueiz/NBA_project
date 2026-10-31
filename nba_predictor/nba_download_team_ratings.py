@@ -10,7 +10,7 @@ from zipfile import ZipFile, is_zipfile
 import pandas as pd
 import requests
 
-from nba_advanced_stats import team_key
+from nba_predictor.nba_advanced_stats import team_key
 
 SOURCE = 'https://www.kaggle.com/datasets/sumitrodatta/nba-aba-baa-stats'
 URL = 'https://www.kaggle.com/api/v1/datasets/download/sumitrodatta/nba-aba-baa-stats/' + quote('Team Summaries.csv')
@@ -49,7 +49,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--start', type=int, default=1970)
     parser.add_argument('--end', type=int, default=2026)
-    parser.add_argument('--outdir', type=Path, default=Path('nba_updated'))
+    parser.add_argument('--outdir', type=Path, default=Path('data/nba_updated'))
     parser.add_argument('--refresh', action='store_true')
     args = parser.parse_args(argv)
     if args.start > args.end:

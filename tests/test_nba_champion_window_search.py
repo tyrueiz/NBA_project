@@ -9,7 +9,7 @@ from unittest.mock import patch
 import numpy as np
 import pandas as pd
 
-from nba_champion_window_search import fit_window, leaderboard, training_windows, wilson_lower
+from nba_predictor.nba_champion_window_search import fit_window, leaderboard, training_windows, wilson_lower
 
 
 class WindowSearchTests(unittest.TestCase):
@@ -75,7 +75,7 @@ class WindowSearchTests(unittest.TestCase):
             root = Path(directory)
             (root/'fit_cache').mkdir()
             args = argparse.Namespace(output_dir=root, min_feature_coverage=.35, max_features=56)
-            with patch('nba_champion_window_search.make_xgb_pipeline', return_value=Spy()):
+            with patch('nba_predictor.nba_champion_window_search.make_xgb_pipeline', return_value=Spy()):
                 fit = fit_window('xgboost', 2000, 2009, frame, zscores,
                                  {year:'DDD' for year in range(2000,2013)}, args)
                 resumed = fit_window('xgboost', 2000, 2009, frame, zscores, {}, args)

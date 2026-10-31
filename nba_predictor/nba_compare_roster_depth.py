@@ -21,15 +21,15 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-from nba_champion_advanced import TEAM_ADVANCED_FEATURES
-from nba_champion_best_player import BEST_PLAYER_FEATURES, SECOND_PLAYER_FEATURES
-from nba_champion_first_time import FIRST_TIME_FEATURES
-from nba_champion_roster_depth import (ROSTER_DEPTH_FEATURES, add_roster_depth,
+from nba_predictor.nba_champion_advanced import TEAM_ADVANCED_FEATURES
+from nba_predictor.nba_champion_best_player import BEST_PLAYER_FEATURES, SECOND_PLAYER_FEATURES
+from nba_predictor.nba_champion_first_time import FIRST_TIME_FEATURES
+from nba_predictor.nba_champion_roster_depth import (ROSTER_DEPTH_FEATURES, add_roster_depth,
                                        depth_configuration, feature_selection_audit)
-from nba_champion_window_search import prepare_data
-from nba_predict_champions_xgboost_2010_2026 import (available_features, make_xgb_pipeline,
+from nba_predictor.nba_champion_window_search import prepare_data
+from nba_predictor.nba_predict_champions_xgboost_2010_2026 import (available_features, make_xgb_pipeline,
                                                    to_season_zscores)
-from nba_team_ratings import TEAM_RATING_FEATURES
+from nba_predictor.nba_team_ratings import TEAM_RATING_FEATURES
 
 
 def validate_dates(args):
@@ -268,10 +268,10 @@ def write_report(directory, comparison, ablations, args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--input-dir', type=Path, default=Path('nba_updated'))
-    parser.add_argument('--analysis-dir', type=Path, default=Path('nba_champions_analysis'))
-    parser.add_argument('--output-dir', type=Path, default=Path('nba_roster_depth_experiments'))
-    parser.add_argument('--baseline-details', type=Path, default=Path('nba_champion_predictions_xgboost/model_details.json'))
+    parser.add_argument('--input-dir', type=Path, default=Path('data/nba_updated'))
+    parser.add_argument('--analysis-dir', type=Path, default=Path('outputs/nba_champions_analysis'))
+    parser.add_argument('--output-dir', type=Path, default=Path('outputs/nba_roster_depth_experiments'))
+    parser.add_argument('--baseline-details', type=Path, default=Path('outputs/nba_champion_predictions_xgboost/model_details.json'))
     parser.add_argument('--advanced-file', type=Path)
     parser.add_argument('--stats-file', type=Path)
     parser.add_argument('--team-ratings-file', type=Path)

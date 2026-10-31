@@ -22,8 +22,8 @@ import numpy as np
 import pandas as pd
 import requests
 
-from nba_advanced_stats import player_key, team_key
-from nba_champion_playoff_experience import match_roster_identities
+from nba_predictor.nba_advanced_stats import player_key, team_key
+from nba_predictor.nba_champion_playoff_experience import match_roster_identities
 
 ARCHIVE = 'https://www.kaggle.com/datasets/eoinamoore/historical-nba-data-and-player-box-scores'
 DOWNLOAD = 'https://www.kaggle.com/api/v1/datasets/download/eoinamoore/historical-nba-data-and-player-box-scores/'
@@ -404,7 +404,7 @@ def reconcile_series_discrepancies(players, totals, cache, delay):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--input-dir', type=Path, default=Path('nba_updated'))
+    parser.add_argument('--input-dir', type=Path, default=Path('data/nba_updated'))
     parser.add_argument('--start', type=int, default=1954)
     parser.add_argument('--end', type=int, default=2026)
     parser.add_argument('--delay', type=float, default=6, help='Seconds between Basketball Reference requests (minimum 6)')

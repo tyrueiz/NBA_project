@@ -5,13 +5,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from nba_champion_advanced import TEAM_ADVANCED_FEATURES, add_team_advanced
-from nba_champion_best_player import BEST_PLAYER_FEATURES, SECOND_PLAYER_FEATURES, select_best_players
-from nba_advanced_stats import player_key, team_key
-from nba_predict_champions_2010_2026 import available_features as logistic_features
-from nba_predict_champions_xgboost_2010_2026 import available_features as xgb_features
-from nba_predict_champions_2010_2026 import to_season_zscores as logistic_zscores
-from nba_predict_champions_xgboost_2010_2026 import to_season_zscores as xgb_zscores
+from nba_predictor.nba_champion_advanced import TEAM_ADVANCED_FEATURES, add_team_advanced
+from nba_predictor.nba_champion_best_player import BEST_PLAYER_FEATURES, SECOND_PLAYER_FEATURES, select_best_players
+from nba_predictor.nba_advanced_stats import player_key, team_key
+from nba_predictor.nba_predict_champions_2010_2026 import available_features as logistic_features
+from nba_predictor.nba_predict_champions_xgboost_2010_2026 import available_features as xgb_features
+from nba_predictor.nba_predict_champions_2010_2026 import to_season_zscores as logistic_zscores
+from nba_predictor.nba_predict_champions_xgboost_2010_2026 import to_season_zscores as xgb_zscores
 
 
 class TeamAdvancedTests(unittest.TestCase):

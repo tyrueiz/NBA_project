@@ -5,9 +5,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from nba_champion_first_time import FIRST_TIME_FEATURES, add_first_time_features
-from nba_predict_champions_2010_2026 import available_features as logistic_features
-from nba_predict_champions_xgboost_2010_2026 import available_features as xgb_features
+from nba_predictor.nba_champion_first_time import FIRST_TIME_FEATURES, add_first_time_features
+from nba_predictor.nba_predict_champions_2010_2026 import available_features as logistic_features
+from nba_predictor.nba_predict_champions_xgboost_2010_2026 import available_features as xgb_features
 
 
 class FirstTimeTests(unittest.TestCase):

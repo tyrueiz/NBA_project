@@ -21,12 +21,12 @@ These are same-season predictions/backtests using regular-season information. Th
 
 ## 2. Data inputs
 
-- `nba_champions_analysis/team_metrics_all_seasons.csv`: team metrics aggregated from regular-season player totals.
-- `nba_updated/NBA_team_seasons_1947_2027.csv`: season/team results, wins and losses, championship labels, and historical playoff qualification.
-- A regular-season player totals CSV in `nba_updated/`: selected players' box scores and historical roster membership. The scripts can auto-detect a file or accept `--stats-file`.
-- `nba_updated/NBA_advanced_1970_2026.csv`: imported player advanced statistics, including individual team stints.
-- `nba_updated/NBA_team_ratings_1970_2026.csv`: actual regular-season team offensive, defensive, and net ratings.
-- `nba_champions_analysis/champions_vs_league_all_stats.csv`, when available: an additional source of historical championship labels, checked for conflicts.
+- `outputs/nba_champions_analysis/team_metrics_all_seasons.csv`: team metrics aggregated from regular-season player totals.
+- `data/nba_updated/NBA_team_seasons_1947_2027.csv`: season/team results, wins and losses, championship labels, and historical playoff qualification.
+- A regular-season player totals CSV in `data/nba_updated/`: selected players' box scores and historical roster membership. The scripts can auto-detect a file or accept `--stats-file`.
+- `data/nba_updated/NBA_advanced_1970_2026.csv`: imported player advanced statistics, including individual team stints.
+- `data/nba_updated/NBA_team_ratings_1970_2026.csv`: actual regular-season team offensive, defensive, and net ratings.
+- `outputs/nba_champions_analysis/champions_vs_league_all_stats.csv`, when available: an additional source of historical championship labels, checked for conflicts.
 
 Historical advanced data and team ratings are cached from the public NBA/ABA/BAA dataset maintained by Sumitro Datta; the downloader filters NBA records. The player advanced-stat downloader also supports a third-party API fallback for newer seasons. A file's presence or year range does not independently prove every value or outcome is correct; source accuracy still matters.
 
@@ -180,7 +180,7 @@ The default grid contains 1,892 fits across both algorithms and 28,380 date-wind
 
 Leaderboard order uses validation accuracy's 95% Wilson lower bound, then top-one accuracy, top-three accuracy, mean reciprocal rank, and validation sample count. Later-test results do not determine ranking. In the default search, 2026 is excluded from all validation and selection; earlier later-test years may overlap other candidates' validation periods.
 
-Searching many windows can overfit validation. Different validation periods are not directly equivalent, and one final holdout season is weak evidence of generalization. The older leaderboard directory may describe an earlier feature set. The current default output directory is `nba_champion_window_search_top2_ratings/`; do not assume the entire updated search has been run merely because the script supports it.
+Searching many windows can overfit validation. Different validation periods are not directly equivalent, and one final holdout season is weak evidence of generalization. The older leaderboard directory may describe an earlier feature set. The current default output directory is `outputs/nba_champion_window_search_top2_ratings/`; do not assume the entire updated search has been run merely because the script supports it.
 
 ## 9. Latest saved runs versus supported defaults
 
@@ -188,8 +188,8 @@ The following describes the metadata currently on disk, which may reflect comman
 
 | Saved output directory | Actual feature groups recorded |
 | --- | --- |
-| `nba_champion_predictions/` | Win percentage; three team ratings; six experience proxies; ten roster advanced statistics; both selected players' 17 statistics; five other team statistics |
-| `nba_champion_predictions_xgboost/` | Win percentage; three team ratings; ten roster advanced statistics; only the first player's 17 statistics; other basic team statistics. Second-player and experience lists are empty. |
+| `outputs/nba_champion_predictions/` | Win percentage; three team ratings; six experience proxies; ten roster advanced statistics; both selected players' 17 statistics; five other team statistics |
+| `outputs/nba_champion_predictions_xgboost/` | Win percentage; three team ratings; ten roster advanced statistics; only the first player's 17 statistics; other basic team statistics. Second-player and experience lists are empty. |
 
 The logistic snapshot contains 59 features. Its five additional team columns are `FG`, `FGA`, `FG%`, `FT`, and `FTA`.
 
@@ -249,7 +249,7 @@ results: A 5/17, B 8/17, C 8/17. Individual depth ablations did not improve
 validation performance. Depth stays disabled by default; additional inputs did
 not establish an accuracy improvement. Detailed metrics, every season's picks,
 and recommendations are in
-`nba_roster_depth_experiments_1983_2002/REPORT.md` and its companion CSVs.
+`outputs/nba_roster_depth_experiments_1983_2002/REPORT.md` and its companion CSVs.
 
 ## Update: actual playoff experience and roster continuity
 
@@ -286,7 +286,7 @@ player/coach experience is evaluated separately.
 
 Actual historical records have been downloaded and checked, not merely
 implemented as empty inputs. Compact player, coach, series, team, identity and
-coverage files are in `nba_updated/playoff_history/`, covering 1954–2026. Earlier
+coverage files are in `data/nba_updated/playoff_history/`, covering 1954–2026. Earlier
 game-archive years are incomplete, so older player careers are marked censored
 instead of treated as zero experience. At least 95% usable current roster
 minutes and resolved leaders are required. Series tables audit the few
@@ -308,4 +308,4 @@ backtest counts were 3/17, 5/17, and 4/17. Actual participation alone is the
 more promising candidate for winner accuracy on this small validation sample.
 Full metrics, every season's predictions, roster comparisons, exact selected
 columns, and source hashes are in
-`nba_playoff_experience_comparison_verified_1983_2002/REPORT.md` and its CSVs.
+`outputs/nba_playoff_experience_comparison_verified_1983_2002/REPORT.md` and its CSVs.

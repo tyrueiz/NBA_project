@@ -1,5 +1,30 @@
 # NBA_project
-scraping and using NBA data
+Scraping and using NBA data.
+
+## Project layout and commands
+
+```text
+nba_predictor/  Python modules: collection, features, models, evaluation
+tests/         Offline regression tests
+docs/          Detailed model context and project organization
+data/          Downloaded records and source caches (local, ignored)
+outputs/       Predictions, analysis, and experiments (local, ignored)
+```
+
+Run commands **from the project root** using `python3 -m nba_predictor.MODULE`.
+For example:
+
+```bash
+python3 -m nba_predictor.nba_predict_champions_xgboost_2010_2026 --help
+python3 -m unittest discover -s tests -v
+```
+
+Existing datasets and results have been moved into `data/` and `outputs/`.
+Defaults use these paths; explicit `--input-dir`, `--analysis-dir`, and
+`--output-dir` arguments remain supported. Old root-level script commands must
+be updated to the module form above. See [organization and migration](docs/PROJECT_STRUCTURE.md)
+and [full model context](docs/CHAMPION_PREDICTOR_CONTEXT_FOR_CHATGPT.md).
+
 
 ## Actual playoff participation and roster/coach continuity
 
@@ -7,12 +32,12 @@ Both championship scripts now support **actual prior playoff experience** as an
 optional replacement for the six older playoff-roster proxies:
 
 ```bash
-python3 nba_download_playoff_history.py
-python3 nba_compare_playoff_experience.py --output-dir nba_playoff_experience_comparison
-python3 nba_predict_champions_xgboost_2010_2026.py \
+python3 -m nba_predictor.nba_download_playoff_history
+python3 -m nba_predictor.nba_compare_playoff_experience --output-dir outputs/nba_playoff_experience_comparison
+python3 -m nba_predictor.nba_predict_champions_xgboost_2010_2026 \
   --train-start 1983 --train-end 2002 --predict-start 2010 --predict-end 2026 \
   --include-playoff-experience --no-playoff-continuity \
-  --output-dir nba_champion_predictions_actual_experience
+  --output-dir outputs/nba_champion_predictions_actual_experience
 ```
 
 `--include-playoff-experience` adds the actual experience and continuity groups;
@@ -65,8 +90,8 @@ name collisions. Unknown/censored history is excluded from known-history
 averages, with at least 95% current minute coverage and resolved leading players
 required. Counts cover NBA games, not ABA or international playoffs.
 
-The source cache is in `nba_updated/playoff_experience_sources/`; compact
-verified files are in `nba_updated/playoff_history/`. The downloader reuses
+The source cache is in `data/nba_updated/playoff_experience_sources/`; compact
+verified files are in `data/nba_updated/playoff_history/`. The downloader reuses
 caches, makes no authentication-required requests, and waits at least six
 seconds between new Basketball Reference pages. Predictors use local files only.
 Its sources are [Eoin Moore's historical game archive](https://www.kaggle.com/datasets/eoinamoore/historical-nba-data-and-player-box-scores),
@@ -77,7 +102,7 @@ Its sources are [Eoin Moore's historical game archive](https://www.kaggle.com/da
 The controlled comparison trains 1983–2002, validates 2003–2009, and separately
 backtests 2010–2026. The later period has already been explored and is not an
 untouched holdout. Final results are in
-`nba_playoff_experience_comparison_verified_1983_2002/REPORT.md`.
+`outputs/nba_playoff_experience_comparison_verified_1983_2002/REPORT.md`.
 For XGBoost, actual experience improved validation correct picks from 4/7 to
 5/7; adding continuity reduced it to 4/7. Backtest correct picks were 8/17,
 8/17, and 7/17 respectively. Actual experience alone is the more promising
@@ -124,15 +149,15 @@ flags and do not control this separate optional group.
 Use a new output directory to preserve older results:
 
 ```bash
-python3 nba_predict_champions_xgboost_2010_2026.py \
+python3 -m nba_predictor.nba_predict_champions_xgboost_2010_2026 \
   --train-start 1983 --train-end 2002 --predict-start 2003 --predict-end 2026 \
   --include-roster-depth --output-dir nba_champion_predictions_depth
-python3 nba_compare_roster_depth.py --output-dir nba_roster_depth_experiments
+python3 -m nba_predictor.nba_compare_roster_depth --output-dir outputs/nba_roster_depth_experiments
 ```
 
 The comparison refuses to overwrite an existing experiment directory. It
 freezes Model A's actual saved feature list from
-`nba_champion_predictions_xgboost/model_details.json`; B adds the 17
+`outputs/nba_champion_predictions_xgboost/model_details.json`; B adds the 17
 second-player statistics and six experience proxies; C adds all five depth
 features. For the current baseline that is **56 / 79 / 84 columns**. Explicit
 additive lists retain every baseline feature, rather than replacing basic
@@ -142,7 +167,7 @@ No 2010+ championship labels enter any fit. Ten individual/leave-one-out depth
 ablations use validation only. The backtest was previously explored and is
 not an untouched holdout.
 
-The completed comparison is in `nba_roster_depth_experiments_1983_2002/`.
+The completed comparison is in `outputs/nba_roster_depth_experiments_1983_2002/`.
 See its `REPORT.md`, `model_comparison.csv`, `season_predictions.csv`, and
 `validation_depth_ablations.csv`. Adding all five depth inputs reduced
 validation top-one accuracy from 4/7 to 3/7; B and C both scored 8/17 in the
@@ -163,8 +188,8 @@ cannot be recovered. New runs record flags explicitly.
 ## Date-window search and leaderboard
 
 ```bash
-python3 nba_champion_window_search.py
-python3 render_champion_leaderboard.py
+python3 -m nba_predictor.nba_champion_window_search
+python3 -m nba_predictor.render_champion_leaderboard
 ```
 
 This searches **every eligible training start, training cutoff, and validation
@@ -191,8 +216,8 @@ periods can overlap other candidates’ validation periods; only 2026 is a globa
 holdout in the default search. Searching many windows can overfit validation,
 and one final holdout season is not enough to establish reliable accuracy.
 
-New-feature outputs are in `nba_champion_window_search_top2_ratings/`. The earlier
-`nba_champion_window_search/` leaderboard is preserved as the two-player baseline.
+New-feature outputs are in `outputs/nba_champion_window_search_top2_ratings/`. The earlier
+`outputs/nba_champion_window_search/` leaderboard is preserved as the two-player baseline.
 Run the search again to produce a full leaderboard for the new feature set:
 
 - `all_windows_leaderboard.csv`: every date combination, validation and later-test scores.
@@ -216,10 +241,10 @@ Both champion predictors now load the same cached regular-season advanced-stat
 CSV as the MVP models:
 
 ```bash
-python3 nba_download_advanced.py --start 1970 --end 2026
-python3 nba_download_team_ratings.py --start 1970 --end 2026
-python3 nba_predict_champions_2010_2026.py
-python3 nba_predict_champions_xgboost_2010_2026.py
+python3 -m nba_predictor.nba_download_advanced --start 1970 --end 2026
+python3 -m nba_predictor.nba_download_team_ratings --start 1970 --end 2026
+python3 -m nba_predictor.nba_predict_champions_2010_2026
+python3 -m nba_predictor.nba_predict_champions_xgboost_2010_2026
 ```
 
 Use `--train-start`, `--train-end`, `--predict-start`, and `--predict-end` to
@@ -312,8 +337,8 @@ within training. The existing imputer fits its replacement values on training
 data only. Unexpected missing metrics in later years still cause an error;
 `Failure_Reasons` in the coverage report identifies which checks failed.
 This catches incomplete advanced-stat seasons instead of silently imputing
-entire teams. Results and diagnostics remain in `nba_champion_predictions/`
-and `nba_champion_predictions_xgboost/`.
+entire teams. Results and diagnostics remain in `outputs/nba_champion_predictions/`
+and `outputs/nba_champion_predictions_xgboost/`.
 
 ## MVP prediction
 
@@ -321,9 +346,9 @@ Install dependencies with `python3 -m pip install pandas numpy scikit-learn xgbo
 Use the regular-season **totals** CSV generated by the scraper, plus advanced stats:
 
 ```bash
-python3 nba_download_advanced.py --start 1970 --end 2026
-python3 nba_predict_mvp_linear.py
-python3 nba_predict_mvp_xgboost.py
+python3 -m nba_predictor.nba_download_advanced --start 1970 --end 2026
+python3 -m nba_predictor.nba_predict_mvp_linear
+python3 -m nba_predictor.nba_predict_mvp_xgboost
 ```
 
 Both default to training on seasons ending **1980–2022** and predicting
@@ -369,7 +394,7 @@ filtering to NBA rows. It can fetch newer seasons from the third-party
 [NBA Stats API](https://github.com/nprasad2077/nbaStats) when absent from that
 dataset. Both sources are independent of the NBA organization. Source URLs and
 download timestamps are saved with the data. The historical source is cached
-as `nba_updated/advanced_historical_source.csv`; individual season caches are
+as `data/nba_updated/advanced_historical_source.csv`; individual season caches are
 `advanced_YEAR.csv`. Completed ranges are saved as `NBA_advanced_START_END.csv`.
 Failed runs retain season caches and write `advanced_download_report.json`;
 rerun to resume. `--refresh` rebuilds season files using the historical source
@@ -409,7 +434,7 @@ keeps every candidate with a `Predicted_Top3` flag.
 
 Each model writes `player_predictions.csv`, `top3_predictions.csv`, `predicted_mvps.csv`,
 `feature_importance.csv`, `model_details.json`, and `historical_validation.csv`
-to `nba_mvp_predictions_linear/` or `nba_mvp_predictions_xgboost/`.
+to `outputs/nba_mvp_predictions_linear/` or `outputs/nba_mvp_predictions_xgboost/`.
 Historical validation defaults to 2015 through the training end year: each season is predicted using only
 earlier seasons, starting in 1980. `--validation-start` changes the first
 validation season; at least ten earlier training seasons are required.
